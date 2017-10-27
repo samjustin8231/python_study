@@ -26,20 +26,20 @@ jsonFile = "/home/yajun.sun/scripts/call_data/call_data.json"
 # 当天inviteStart所有的记录
 sql_cur_day_invite = """select ver,platform,channel,Week(talkStart) as week 
    from clientCallerVoipCallLog_%s
-   where Date(inviteStart) = %s limit 0,50;
+   where Date(inviteStart) = %s;
 	"""
 
 # # 当天ringStart所有的记录
 sql_cur_day_ring = """select ver,platform,channel,Week(talkStart) as week 
    from clientCallerVoipCallLog_%s
-   where Date(ringStart) = %s limit 0,50;
+   where Date(ringStart) = %s;
 	"""
-#
-# # 当天talkStart所有的记录
-# sql_cur_day_talk = """select inviteStart,ringStart,talkStart,finishTime,ver,channel,Week(talkStart) as week,callType,isAnswered
-#    from clientCallerVoipCallLog_%s
-#    where Date(talkStart) = %s limit 0,20;
-# 	"""
+
+# 当天talkStart所有的记录
+sql_cur_day_talk = """select ver,platform,channel,Week(talkStart) as week 
+   from clientCallerVoipCallLog_%s
+   where Date(talkStart) = %s;
+	"""
 #
 # # 昨天talkStart所有的记录
 # sql_yestoday_talk = """select inviteStart,ringStart,talkStart,finishTime,ver,channel,Week(talkStart) as week,callType,isAnswered
@@ -103,7 +103,9 @@ def process():
 	# 当天invite数据
 	print "\ninvite data of cur day:"
 	params = [curWeek,today]
+	print "sql run start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	inviteCallCount = cursor.execute(sql_cur_day_invite, params) # return count
+	print "sql run end time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	print "\ninvite count cur day:" + str(inviteCallCount)
 	dataType = "invite"
 	# 打印表中的多少数据
@@ -111,44 +113,51 @@ def process():
 
 	# 当天ring数据
 	print "\nring data of cur day:"
+	print "sql run start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	ringCallCount = cursor.execute(sql_cur_day_ring, params)  # return count
+	print "sql run end time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	print "\nring count cur day:" + str(ringCallCount)
 	dataType = "ring"
 	# 打印表中的多少数据
 	printData(cursor, ringCallCount, dataType, today)  # close db
-    #
-	# # 当天talk数据
-	# print "\ntalk data of cur day:"
-	# talkCallCount = cursor.execute(sql_cur_day_talk, params)  # return count
-	# print "\ntalk count cur day:" + str(talkCallCount)
-	# dataType = "talk"
-	# # 打印表中的多少数据
-	# printData(cursor, ringCallCount, dataType)  # close db
+
+	# 当天talk数据
+	print "\ntalk data of cur day:"
+	print "sql run start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+	talkCallCount = cursor.execute(sql_cur_day_talk, params)  # return count
+	print "sql run end time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+	print "\ntalk count cur day:" + str(talkCallCount)
+	dataType = "talk"
+	# 打印表中的多少数据
+	printData(cursor, ringCallCount, dataType, today)  # close db
 
 	####################### 获取昨天数据
 
-	# 昨天invite数据
-	print "\ninvite data of yesteday:"
-	params = [lastWeek, yestoday]
-	inviteCallCount = cursor.execute(sql_cur_day_invite, params)  # return count
-	print "\ninvite count yesteday:" + str(inviteCallCount)
-	dataType = "invite"
-	# 打印表中的多少数据
-	printData(cursor, inviteCallCount, dataType, yestoday)  # close db
-
-
-	print "\nring data of yesteday:"
-	inviteCallCount = cursor.execute(sql_cur_day_ring, params)  # return count
-	print "\nring count yesteday:" + str(inviteCallCount)
-	dataType = "ring"
-	# 打印表中的多少数据
-	printData(cursor, inviteCallCount, dataType, yestoday)  # close db
+	# # 昨天invite数据
+	# print "\ninvite data of yesteday:"
+	# params = [lastWeek, yestoday]
+	# inviteCallCount = cursor.execute(sql_cur_day_invite, params)  # return count
+	# print "\ninvite count yesteday:" + str(inviteCallCount)
+	# dataType = "invite"
+	# # 打印表中的多少数据
+	# printData(cursor, inviteCallCount, dataType, yestoday)  # close db
+    #
+    #
+	# print "\nring data of yesteday:"
+	# inviteCallCount = cursor.execute(sql_cur_day_ring, params)  # return count
+	# print "\nring count yesteday:" + str(inviteCallCount)
+	# dataType = "ring"
+	# # 打印表中的多少数据
+	# printData(cursor, inviteCallCount, dataType, yestoday)  # close db
     #
 	# #talk count
-	# talkCountDay = cursor.execute(sql_day_ver_talk_count,(curWeek)) # return count
-	# print "\ntalk count cur day:" + str(talkCountDay)
-	# fw.write("\ntalk count cur day:" + str(talkCountDay))
-	# talkJsonData = printData(cursor, talkCountDay)# close db
+	# print "\ntalk data of yesteday:"
+	# inviteCallCount = cursor.execute(sql_cur_day_talk, params)  # return count
+	# print "\ntalk count yesteday:" + str(inviteCallCount)
+	# dataType = "talk"
+	# # 打印表中的多少数据
+	# printData(cursor, inviteCallCount, dataType, yestoday)  # close db
+
     #
 	# #############################
 	# # 当周的数据
@@ -198,6 +207,7 @@ def getCurWeek():
 
 def printData(cursor, talkCount, dataType ,mDate):
 	"将cursor打印循环打印成Json格式"
+	print "write start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	try:
 		data = cursor.fetchmany(talkCount)
 		# for item in data:
@@ -221,7 +231,7 @@ def printData(cursor, talkCount, dataType ,mDate):
 
 			try:
 				out_log = json.dumps(result, ensure_ascii=False,cls=CJsonEncoder)
-				print out_log
+				# print out_log
 				fw.write(out_log)
 				fw.write("\n")
 			except Exception, e:
@@ -232,8 +242,10 @@ def printData(cursor, talkCount, dataType ,mDate):
 		fw.close()
 		logging.error(str(e))
 	else:
-		jsondatar = json.dumps(jsonData, ensure_ascii=False,cls=CJsonEncoder)
-		return jsondatar
+		# jsondatar = json.dumps(jsonData, ensure_ascii=False,cls=CJsonEncoder)
+		# return jsondatar
+		print "write end time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+		pass
 
 if __name__ == "__main__":
 	if len(sys.argv) > 1:
