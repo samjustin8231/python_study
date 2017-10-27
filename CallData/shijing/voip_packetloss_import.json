@@ -1,0 +1,115 @@
+{
+  "type" : "index_hadoop",
+  "spec" : {
+    "ioConfig" : {
+      "type" : "hadoop",
+      "inputSpec" : {
+        "type" : "static",
+        "paths" : "hdfs://hadoop2-namenode:9000/user/shijing.xue/packet_loss/voip_packetLoss_data.json"
+      }
+    },
+    "dataSchema" : {
+      "dataSource" : "voip_postman_packetsloss",
+      "parser" : {
+        "type" : "string",
+        "parseSpec" : {
+          "format" : "json",
+          "timestampSpec" : {
+            "format" : "yyyy-MM-dd",
+            "column" : "date"
+          },
+          "dimensionsSpec" : {
+            "dimensions" : [
+              "date",
+              "region",
+              "client_type",
+              "channel",
+              "type"
+            ]
+          }
+        }
+      },
+      "granularitySpec" : {
+        "type" : "uniform",
+        "segmentGranularity" : "day",
+        "queryGranularity" : "none", 
+        "intervals" : ["2017-01-01/2019-01-01"]
+      },
+      "metricsSpec" : [
+        {
+          "name" : "peerside_thoeryRecvPackets",
+          "type" : "longSum",
+          "fieldName" : "peerside_thoeryRecvPackets"
+        },
+        {
+          "name" : "peerside_recvPackets",
+          "type" : "longSum",
+          "fieldName" : "peerside_recvPackets"
+        },
+        {
+          "name" : "clientside_thoeryRecvPackets",
+          "type" : "longSum",
+          "fieldName" : "clientside_thoeryRecvPackets"
+        },
+        {
+          "name" : "clientside_recvPackets",
+          "type" : "longSum",
+          "fieldName" : "clientside_recvPackets"
+        },
+        {
+          "name" : "clientside_rawRecvPackets",
+          "type" : "longSum",
+          "fieldName" : "clientside_rawRecvPackets"
+        },
+        {
+          "name" : "peerside_rawRecvPackets",
+          "type" : "longSum",
+          "fieldName" : "peerside_rawRecvPackets"
+        },
+        {
+          "name" : "clientside_pktsloss",
+          "type" : "doubleSum",
+          "fieldName" : "clientside_pktsloss"
+        },
+        {
+          "name" : "peerside_pktsloss",
+          "type" : "doubleSum",
+          "fieldName" : "peerside_pktsloss"
+        },
+        {
+          "name" : "client_rawloss",
+          "type" : "doubleSum",
+          "fieldName" : "client_rawloss"
+        },
+        {
+          "name" : "peer_rawloss",
+          "type" : "doubleSum",
+          "fieldName" : "peer_rawloss"
+        },
+        {
+          "name" : "num",
+          "type" : "longSum",
+          "fieldName" : "num"
+        },
+        {
+          "name" : "cs_bigger_1%_num",
+          "type" : "longSum",
+          "fieldName" : "cs_bigger_1%_num"
+        },
+        {
+          "name" : "billsec",
+          "type" : "longSum",
+          "fieldName" : "billsec"
+        }
+      ]
+    },
+    "tuningConfig" : {
+      "type" : "hadoop",
+      "partitionsSpec" : {
+        "type" : "hashed",
+        "numShards" : 1
+      },
+      "jobProperties" : {}
+    }
+  }
+}

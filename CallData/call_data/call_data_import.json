@@ -1,0 +1,56 @@
+{
+  "type" : "index_hadoop",
+  "spec" : {
+    "ioConfig" : {
+      "type" : "hadoop",
+      "inputSpec" : {
+        "type" : "static",
+        "paths" : "hdfs://hadoop2-namenode:9000/user/yajun.sun/call_data/call_data.json"
+      }
+    },
+    "dataSchema" : {
+      "dataSource" : "contactplus_call_data",
+      "parser" : {
+        "type" : "string",
+        "parseSpec" : {
+          "format" : "json",
+          "timestampSpec" : {
+            "format" : "yyyy-MM-dd",
+            "column" : "date"
+          },
+          "dimensionsSpec" : {
+            "dimensions" : [
+              "ver",
+              "platform",
+              "channel",
+              "week",
+              "date",
+              "dataType"
+            ]
+          }
+        }
+      },
+      "granularitySpec" : {
+        "type" : "uniform",
+        "segmentGranularity" : "day",
+        "queryGranularity" : "none",
+        "intervals" : ["2017-01-01/2019-01-01"]
+      },
+      "metricsSpec" : [
+        {
+          "name" : "num",
+          "type" : "longSum",
+          "fieldName" : "num"
+        }
+      ]
+    },
+    "tuningConfig" : {
+      "type" : "hadoop",
+      "partitionsSpec" : {
+        "type" : "hashed",
+        "numShards" : 1
+      },
+      "jobProperties" : {}
+    }
+  }
+}
