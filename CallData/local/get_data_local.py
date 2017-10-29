@@ -11,7 +11,7 @@ class CJsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, datetime.date):
+        elif isinstance(obj, datetime.datetime.date):
             return obj.strftime('%Y-%m-%d')
         else:
             return json.JSONEncoderls.default(self, obj)
@@ -26,7 +26,7 @@ db_config = {
 file_addr = "/Users/sam/call_data.log"
 
 # 当天接通量>=1000的各个版本的接通量
-sql_today = """select * 
+sql_today = """select inviteStart,ringStart
     from CallLog%s
     where Date(inviteStart) = Date(%s);
     """
@@ -65,12 +65,25 @@ def printData(cursor, talkCount):
         # 	print item
 
         jsonData = []
+
+        datestart = datetime.strptime('1970-01-01 08:00:00', '%Y-%m-%d %H:%M:%S')
         # 循环读取元组数据
         # 将元组数据转换为列表类型，每个条数据元素为字典类型:[{'字段1':'字段1的值','字段2':'字段2的值',...,'字段N:字段N的值'},{第二条数据},...,{第N条数据}]
         for row in data:
             result = {}
-            result['inviteStart'] = row[0]
-            result['ringStart'] = row[1]
+            # result['inviteStart'] = row[0]
+            # result['ringStart'] = row[1]
+            if row[0] == datestart:
+                result["inviteNum"] = 1
+            else:
+                result["inviteNum"] = 0
+
+            if row[1] == datestart:
+                result["ringNum"] = 1
+            else:
+                result["ringNum"] = 0
+
+            result["test"] = 1
             jsonData.append(result)
 
             try:
@@ -101,8 +114,8 @@ if __name__ == "__main__":
     else:
         today = datetime.today()
     print "today:" + str(today)
-    # yestoday = today + timedelta(days=-1)
-    yestoday = datetime.strptime("2017-10-17", "%Y-%m-%d")
+    yestoday = today + timedelta(days=-1)
+    # yestoday = datetime.strptime("2017-10-17", "%Y-%m-%d")
     print "yestoday:" + str(yestoday)
 
     curWeek = getCurWeek()
