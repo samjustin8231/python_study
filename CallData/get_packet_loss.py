@@ -30,7 +30,7 @@ def do_execute(sql, params, call_type, client_type):
     except Exception, e:
         logging.error(str(e))
     print "search after time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    
+
     print "write before time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     for item in res:
         data = {}

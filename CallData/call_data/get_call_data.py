@@ -24,13 +24,13 @@ db_config = {
 jsonFile = "/home/yajun.sun/scripts/call_data/call_data.json"
 
 # 当天inviteStart所有的记录
-sql_cur_day_invite = """select ver,platform,channel,Week(talkStart) as week 
+sql_cur_day_invite = """select ver,platform,channel,Week(inviteStart) as week 
    from clientCallerVoipCallLog_%s
    where Date(inviteStart) = %s;
 	"""
 
 # # 当天ringStart所有的记录
-sql_cur_day_ring = """select ver,platform,channel,Week(talkStart) as week 
+sql_cur_day_ring = """select ver,platform,channel,Week(ringStart) as week 
    from clientCallerVoipCallLog_%s
    where Date(ringStart) = %s;
 	"""
@@ -226,6 +226,18 @@ def printData(cursor, talkCount, dataType ,mDate):
 			result['num'] = 1
 			result["date"] = str(mDate)
 			result["dataType"] = dataType
+			if dataType == "invite":
+				result["inviteNum"] = 1
+				result["ringNum"] = 0
+				result["talkNum"] = 0
+			elif dataType == "ring":
+				result["inviteNum"] = 0
+				result["ringNum"] = 1
+				result["talkNum"] = 0
+			elif dataType == "talk":
+				result["inviteNum"] = 0
+				result["ringNum"] = 0
+				result["talkNum"] = 1
 
 			jsonData.append(result)
 
