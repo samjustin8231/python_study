@@ -110,7 +110,7 @@ def getCurWeek():
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        today = datetime.strptime(sys.argv[1], "%Y%m%d")
+        today = datetime.strptime(sys.argv[1], "%Y-%m-%d")
     else:
         today = datetime.today()
     print "today:" + str(today)

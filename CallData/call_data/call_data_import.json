@@ -43,11 +43,6 @@
           "fieldName" : "num"
         },
         {
-          "name" : "inviteNum",
-          "type" : "longSum",
-          "fieldName" : "inviteNum"
-        },
-        {
           "name" : "ringNum",
           "type" : "longSum",
           "fieldName" : "ringNum"

@@ -10,6 +10,7 @@ class CJsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.strftime('%Y-%m-%d %H:%M:%S')
+		# 下面的转换有bug
         # elif isinstance(obj, datetime.date):
         #     return obj.strftime('%Y-%m-%d')
         else:
@@ -23,29 +24,29 @@ db_config = {
 }
 jsonFile = "/home/yajun.sun/scripts/call_data/call_data.json"
 
-# 当天inviteStart所有的记录
+# 某天的所有invite记录
 sql_cur_day = """select ver,platform,channel,Week(inviteStart) as week,ringStart,talkStart
    from clientCallerVoipCallLog_%s
    where Date(inviteStart) = %s;
 	"""
 
 
-def process():
+def getDataFromDb():
 	#connect db
 	db = MySQLdb.connect(**db_config)
 	cursor = db.cursor()
 
 	####################### 获取当天数据
 	# 当天invite数据
-	print "\n data of cur day:"
-	params = [curWeek,today]
+	print "\n data of the day:"
+	params = [week, day]
 	print "sql run start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	inviteCallCount = cursor.execute(sql_cur_day, params) # return count
 	print "sql run end time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-	print "\n count cur day:" + str(inviteCallCount)
+	print "\n count the day:" + str(inviteCallCount)
 	dataType = "invite"
 	# 打印表中的多少数据
-	printData(cursor, inviteCallCount , dataType, today)# close db
+	writeDataToFile(cursor, inviteCallCount, dataType, day)# close db
 
 	cursor.close()
 	db.close()
@@ -54,11 +55,11 @@ def process():
 def getCurWeek():
 	"""get cur week"""
 	# curWeek = time.strftime("%W")
-	curWeek = today.isocalendar()[1]
+	curWeek = day.isocalendar()[1]
 	return curWeek
 
 
-def printData(cursor, talkCount, dataType ,mDate):
+def writeDataToFile(cursor, talkCount, dataType, mDate):
 	"将cursor打印循环打印成Json格式"
 	print "write start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	try:
@@ -82,6 +83,7 @@ def printData(cursor, talkCount, dataType ,mDate):
 			result["ringStart"] = str(row[4])
 			result["talkStart"] = str(row[5])
 
+			# default value = "1970-01-01 08:00:00",if failed
 			if str(row[4]) != "1970-01-01 08:00:00":
 				result['ringNum'] = 1
 			else:
@@ -114,22 +116,19 @@ def printData(cursor, talkCount, dataType ,mDate):
 
 if __name__ == "__main__":
 	if len(sys.argv) > 1:
-		today = datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d").date()
+		day = datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d").date()
 	else:
-		today = datetime.datetime.now().date()
-	yestoday = today + datetime.timedelta(days=-1)
+		day = datetime.datetime.now().date()
+	# yestoday = today + datetime.timedelta(days=-1)
 
 	# get cur week
-	curWeek = getCurWeek()
-	lastWeek = yestoday.isocalendar()[1];
-	print "yestoday:", str(yestoday)
-	print "today:", str(today)
-	print "curWeek:" + str(curWeek)
-	print "lastWeek:" + str(lastWeek)
+	week = getCurWeek()
+	print "date:", str(day)
+	print "week:" + str(week)
 
 	print "......正在查询数据......"
 	fw = open(jsonFile, "w+")
-	process()
+	getDataFromDb()
 	fw.close()
 	print "......查询完成......"
 
