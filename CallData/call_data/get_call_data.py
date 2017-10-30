@@ -43,7 +43,7 @@ def getDataFromDb():
 	print "sql run start time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 	inviteCallCount = cursor.execute(sql_cur_day, params) # return count
 	print "sql run end time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-	print "\n count the day:" + str(inviteCallCount)
+	print "\n the count of the day:" + str(inviteCallCount)
 	dataType = "invite"
 	# 打印表中的多少数据
 	writeDataToFile(cursor, inviteCallCount, dataType, day)# close db
