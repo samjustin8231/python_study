@@ -116,13 +116,17 @@ def writeDataToFile(cursor, talkCount, dataType, mDate):
 
 if __name__ == "__main__":
 	if len(sys.argv) > 1:
+		# set the date
 		day = datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d").date()
 	else:
+		# default get yestaday data
 		day = datetime.datetime.now().date()
-	# yestoday = today + datetime.timedelta(days=-1)
+		day = day + datetime.timedelta(days=-1)
+	# yestoday = day + datetime.timedelta(days=-1)
 
 	# get cur week
 	week = getCurWeek()
+	print "***********每次查询的是前一天的数据：********"
 	print "date:", str(day)
 	print "week:" + str(week)
 
