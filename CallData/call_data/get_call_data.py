@@ -25,9 +25,9 @@ db_config = {
 jsonFile = "/home/yajun.sun/scripts/call_data/call_data.json"
 
 # 某天的所有invite记录
-sql_cur_day = """select ver,platform,channel,Week(inviteStart) as week,ringStart,talkStart
-   from clientCallerVoipCallLog_%s
-   where Date(inviteStart) = %s;
+sql_cur_day = """select ver,platform,channel,Week(inviteStart) as week,ringStart,talkStart,finalBev 
+	from clientCallerVoipCallLog_%s 
+	where Date(inviteStart) = %s and finalBev!='5002' and finalBev!='5003';
 	"""
 
 
@@ -82,6 +82,7 @@ def writeDataToFile(cursor, talkCount, dataType, mDate):
 			result["dataType"] = dataType
 			result["ringStart"] = str(row[4])
 			result["talkStart"] = str(row[5])
+			result["finalBev"] = row[6]
 
 			# default value = "1970-01-01 08:00:00",if failed
 			if str(row[4]) != "1970-01-01 08:00:00":

@@ -5,7 +5,7 @@
       "type" : "hadoop",
       "inputSpec" : {
         "type" : "static",
-        "paths" : "hdfs://hadoop2-namenode:9000/user/yajun.sun/call_data/call_data.json"
+        "paths" : "hdfs:///user/yajun.sun/call_data/call_data.json"
       }
     },
     "dataSchema" : {
