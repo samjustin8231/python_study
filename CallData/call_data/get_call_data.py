@@ -25,9 +25,10 @@ db_config = {
 jsonFile = "/home/yajun.sun/scripts/call_data/call_data.json"
 
 # 某天的所有invite记录
+# and finalBev!='5002' and finalBev!='5003'
 sql_cur_day = """select ver,platform,channel,Week(inviteStart) as week,ringStart,talkStart,finalBev 
 	from clientCallerVoipCallLog_%s 
-	where Date(inviteStart) = %s and finalBev!='5002' and finalBev!='5003';
+	where Date(inviteStart) = %s;
 	"""
 
 
