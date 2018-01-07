@@ -9,7 +9,7 @@
       }
     },
     "dataSchema" : {
-      "dataSource" : "contactplus_call_data",
+      "dataSource" : "voip_call_data",
       "parser" : {
         "type" : "string",
         "parseSpec" : {
@@ -25,7 +25,8 @@
               "channel",
               "week",
               "date",
-              "dataType"
+              "dataType",
+              "callType"
             ]
           }
         }

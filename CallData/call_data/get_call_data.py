@@ -25,10 +25,10 @@ db_config = {
 jsonFile = "/home/yajun.sun/scripts/call_data/call_data.json"
 
 # 某天的所有invite记录
-# and finalBev!='5002' and finalBev!='5003'
-sql_cur_day = """select ver,platform,channel,Week(inviteStart) as week,ringStart,talkStart,finalBev 
+sql_cur_day = """select ver,platform,channel,Week(inviteStart) as week,ringStart,talkStart,
+	finalBev,callType,realRingStart
 	from clientCallerVoipCallLog_%s 
-	where Date(inviteStart) = %s;
+	where Date(inviteStart) = %s and finalBev!='5002' and finalBev!='5003';
 	"""
 
 
@@ -77,21 +77,23 @@ def writeDataToFile(cursor, talkCount, dataType, mDate):
 			result['ver'] = row[0]
 			result['platform'] = row[1]
 			result['channel'] = row[2]
-			result["week"] = row[3]
-			result['num'] = 1
-			result["date"] = str(mDate)
-			result["dataType"] = dataType
-			result["ringStart"] = str(row[4])
-			result["talkStart"] = str(row[5])
-			result["finalBev"] = row[6]
+			result['week'] = row[3]	#week
+			result['num'] = 1		#为了统计总数据量
+			result['date'] = str(mDate)	#date
+			result['dataType'] = dataType		#拨号，振铃，接通
+			result['ringStart'] = str(row[4])	#响铃时间
+			result['talkStart'] = str(row[5])	#接通时间
+			result['finalBev'] = row[6]			#
+			result['callType'] = row[7]			#c2c 还是 c2p
+			#result['realRingStart'] = row[8]	#虚振玲时间
 
 			# default value = "1970-01-01 08:00:00",if failed
-			if str(row[4]) != "1970-01-01 08:00:00":
+			if str(row[4]) != "1970-01-01 08:00:00":	#为了统计响铃量
 				result['ringNum'] = 1
 			else:
 				result['ringNum'] = 0
 
-			if str(row[5]) != "1970-01-01 08:00:00":
+			if str(row[5]) != "1970-01-01 08:00:00":	#为了统计接通量
 				result['talkNum'] = 1
 			else:
 				result['talkNum'] = 0
